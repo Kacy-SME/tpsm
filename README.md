@@ -23,6 +23,9 @@ pip install -r requirements.txt
 python demo.py --config config/vox-256.yaml --checkpoint checkpoints/vox.pth.tar --source_image assets/source.png --driving_video assets/driving.mp4
 ```
 
+Additional models for articulated-animation repository: 
+https://drive.google.com/drive/folders/1jCeFPqfU_wKNYwof0ONICwsj3xHlr_tb?usp=sharing
+
 Original Readme:
 
 Source code of the CVPR'2022 paper "Thin-Plate Spline Motion Model for Image Animation"
