@@ -1,8 +1,29 @@
 # [CVPR2022] Thin-Plate Spline Motion Model for Image Animation
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![stars](https://img.shields.io/github/stars/yoyo-nb/Thin-Plate-Spline-Motion-Model.svg?style=flat)
 ![GitHub repo size](https://img.shields.io/github/repo-size/yoyo-nb/Thin-Plate-Spline-Motion-Model.svg)
+
+# Windows Install
+```
+conda create --name tpsm python=3.9 -y
+conda activate tpsm
+git clone https://github.com/natlamir/tpsm.git
+cd tpsm
+conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia -y
+pip install -r requirements.txt
+
+```
+
+# Download Models
+- Download zip file from [Google Drive](https://drive.google.com/drive/folders/1pNDo1ODQIb5HVObRtCmubqJikmR7VVLT?usp=sharing)
+- Create folder in root of app called `checkpoints` and place all of the `.tar` files extracted from zip there.
+
+# Run Demo
+```
+python demo.py --config config/vox-256.yaml --checkpoint checkpoints/vox.pth.tar --source_image assets/source.png --driving_video assets/driving.mp4
+```
+
+Original Readme:
 
 Source code of the CVPR'2022 paper "Thin-Plate Spline Motion Model for Image Animation"
 
