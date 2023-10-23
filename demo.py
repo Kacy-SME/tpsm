@@ -14,6 +14,8 @@ from modules.inpainting_network import InpaintingNetwork
 from modules.keypoint_detector import KPDetector
 from modules.dense_motion import DenseMotionNetwork
 from modules.avd_network import AVDNetwork
+import subprocess
+import argparse
 
 if sys.version_info[0] < 3:
     raise Exception("You must use Python 3 or higher. Recommended version is Python 3.9")
@@ -125,6 +127,7 @@ def find_best_frame(source, driving, cpu):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
+    parser.add_argument('--addaudio', action=argparse.BooleanOptionalAction)
     parser.add_argument("--config", required=True, help="path to config")
     parser.add_argument("--checkpoint", default='checkpoints/vox.pth.tar', help="path to checkpoint to restore")
 
@@ -177,3 +180,9 @@ if __name__ == "__main__":
     
     imageio.mimsave(opt.result_video, [img_as_ubyte(frame) for frame in predictions], fps=fps)
 
+    if opt.addaudio:
+        cmd = 'ffmpeg -i {} -i {} -c:v copy -c:a aac -strict experimental -map 0:v:0 -map 1:a:0 result_withAudio.mp4'.format(
+            opt.result_video,
+            opt.driving_video
+            )
+        subprocess.call(cmd, shell=True)
