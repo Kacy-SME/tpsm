@@ -40,7 +40,7 @@ def read_video(name, frame_shape):
         video_array = video_array.reshape((-1,) + frame_shape)
         video_array = np.moveaxis(video_array, 1, 2)
     elif name.lower().endswith('.gif') or name.lower().endswith('.mp4') or name.lower().endswith('.mov'):
-        video = mimread(name)
+        video = mimread(name, memtest=False)
         if len(video[0].shape) == 2:
             video = [gray2rgb(frame) for frame in video]
         if frame_shape is not None:
@@ -170,4 +170,3 @@ class DatasetRepeater(Dataset):
 
     def __getitem__(self, idx):
         return self.dataset[idx % self.dataset.__len__()]
-

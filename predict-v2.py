@@ -16,8 +16,7 @@ from cog import BasePredictor, Path, Input
 
 from demo import load_checkpoints
 from demo import make_animation
-from ffhq_dataset.face_alignment import image_align
-from ffhq_dataset.landmarks_detector import LandmarksDetector
+import cv2
 
 
 warnings.filterwarnings("ignore")
@@ -31,7 +30,7 @@ class Predictor(BasePredictor):
     def setup(self):
 
         self.device = torch.device("cuda:0")
-        datasets = ["vox", "taichi", "ted", "mgif"]
+        datasets = ["vox", "taichi", "ted", "mgif", "wasp-v1"]
         (
             self.inpainting,
             self.kp_detector,
@@ -121,5 +120,29 @@ class Predictor(BasePredictor):
 
 
 def align_image(raw_img_path, aligned_face_path):
-    for i, face_landmarks in enumerate(LANDMARKS_DETECTOR.get_landmarks(raw_img_path), start=1):
-        image_align(raw_img_path, aligned_face_path, face_landmarks)
+    img = cv2.imread(raw_img_path)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    #Detect faces in the image
+    faces = dlib.get_frontal_face_detector()(gray, 1)
+    if len(faces) > 0:
+        face = faces[0]
+
+        #Predict landmarks
+        landmarks = np.matrix([[p.x, p.y] for p in PREDICTOR(gray, face).parts()])
+
+        #Eye coordinates
+        left_eye = landmarks[36:42].mean(axis=0).astype(int)
+        right_eye = landmarks[42:48].mean(axis=0).astype(int)
+        eye_center = ((left_eye + right_eye) / 2).astype(int)
+
+        #Angle between eyes
+        dY = right_eye[0, 1] - left_eye[0, 1]
+        dX = right_eye[0, 0] - left_eye[0, 0]
+        angle = np.degrees(np.arctan2(dY, dX))
+
+        #Rotate image
+        M = cv2.getRotationMatrix2D((eye_center[0,0], eye_central[0,1]), angle, 1)
+        aligned = cv2.warpAffine(img, M, (img.shape[1], img.shape[0]))
+
+        cv2.imwrite(aligned_face_path, aligned)
