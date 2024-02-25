@@ -14,10 +14,23 @@ from modules.bg_motion_predictor import BGMotionPredictor
 from modules.dense_motion import DenseMotionNetwork
 from modules.avd_network import AVDNetwork
 import torch
+torch.cuda.set_per_process_memory_fraction(0.5)  # Adjust the fraction as needed
 from train import train
 from train_avd import train_avd
 from reconstruction import reconstruction
 import os 
+
+
+#os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+#os.environ["CUDA_VISIBLE_DEVICES"] = "4"
+
+
+import torch
+
+# Set the environment variable
+os.environ["TORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb=64"
+
+# Now you can continue with your script
 
 
 if __name__ == "__main__":
@@ -32,8 +45,18 @@ if __name__ == "__main__":
     parser.add_argument("--checkpoint", default=None, help="path to checkpoint to restore")
     parser.add_argument("--device_ids", default="0,1", type=lambda x: list(map(int, x.split(','))),
                         help="Names of the devices comma separated.")
-
+    parser.add_argument("--source_image", type=str, help="Path to the source image")
+    parser.add_argument("--driving_video", type=str, help="Path to the driving video")
     opt = parser.parse_args()
+
+    source_image = imageio.imread(opt.source_image)
+    source_image = resize(source_image, (256, 256))[..., :3]
+
+    reader = imageio.get_reader(opt.driving_video)
+    fps = reader.get_meta_data()['fps']
+    driving_video = [resize(frame, (256, 256))[..., :3] for frame in reader]
+    reader.close()
+
     with open(opt.config) as f:
         config = yaml.load(f)
 

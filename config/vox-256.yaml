@@ -1,5 +1,5 @@
 dataset_params:
-  root_dir: ../vox
+  root_dir: 'C:\Users\kacy\Documents\TPSM\tpsm\checkpoints\vox.pth'
   frame_shape: null
   id_sampling: True
   augmentation_params:

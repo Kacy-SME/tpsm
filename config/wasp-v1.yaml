@@ -1,11 +1,11 @@
 dataset_params:
-  root_dir: ../TED384-v2
+  root_dir: "/home/khatfie2/tpsm/checkpoints/Processed-Wasp"
   frame_shape: null
-  id_sampling: True
+  id_sampling: false
   augmentation_params:
     flip_param:
-      horizontal_flip: True
-      time_flip: True
+      horizontal_flip: true
+      time_flip: true
     jitter_param:
       brightness: 0.1
       contrast: 0.1
@@ -16,8 +16,8 @@ model_params:
   common_params:
     num_tps: 10
     num_channels: 3
-    bg: True
-    multi_mask: True
+    bg: true
+    multi_mask: true
   generator_params:
     block_expansion: 64
     max_features: 512
@@ -31,21 +31,20 @@ model_params:
     id_bottle_size: 128
     pose_bottle_size: 128
 
-
 train_params:
   num_epochs: 100
-  num_repeats: 150
+  num_repeats: 75
   epoch_milestones: [70, 90]
   lr_generator: 2.0e-4
-  batch_size: 12
+  batch_size: 28
   scales: [1, 0.5, 0.25, 0.125]
-  dataloader_workers: 6
+  dataloader_workers: 12
   checkpoint_freq: 50
   dropout_epoch: 35
-  dropout_maxp: 0.5
-  dropout_startp: 0.0
+  dropout_maxp: 0.3
+  dropout_startp: 0.1
   dropout_inc_epoch: 10
-  bg_start: 0
+  bg_start: 10
   transform_params:
     sigma_affine: 0.05
     sigma_tps: 0.005
@@ -57,17 +56,17 @@ train_params:
     bg: 10
 
 train_avd_params:
-  num_epochs: 30
-  num_repeats: 500
+  num_epochs: 200
+  num_repeats: 300
   batch_size: 256
   dataloader_workers: 24
-  checkpoint_freq: 10
-  epoch_milestones: [20, 25]
+  checkpoint_freq: 50
+  epoch_milestones: [140, 180]
   lr: 1.0e-3
   lambda_shift: 1
   random_scale: 0.25
 
 visualizer_params:
   kp_size: 5
-  draw_border: True
+  draw_border: true
   colormap: 'gist_rainbow'

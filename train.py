@@ -91,4 +91,3 @@ def train(config, inpainting_network, kp_detector, bg_predictor, dense_motion_ne
                 model_save['optimizer_bg_predictor'] = optimizer_bg_predictor
             
             logger.log_epoch(epoch, model_save, inp=x, out=generated)
-
