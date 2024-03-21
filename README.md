@@ -14,6 +14,14 @@ pip install -r requirements.txt
 
 ```
 
+# Install on ASU-Sol
+```bash
+module load mamba/latest
+mamba create -n tpsm -c conda-forge -c 1adrianb -c pytorch -c nvidia --file requirements.txt
+source activate tpsm
+# to deactivate environment: source deactivate
+```
+
 # Download Models
 - Download zip file from [Google Drive](https://drive.google.com/drive/folders/1pNDo1ODQIb5HVObRtCmubqJikmR7VVLT?usp=sharing)
 - Create folder in root of app called `checkpoints` and place all of the `.tar` files extracted from zip there.
