@@ -16,10 +16,7 @@ pip install -r requirements.txt
 
 # Install on ASU-Sol
 ```bash
-module load mamba/latest
-mamba create -n tpsm -c conda-forge -c 1adrianb -c pytorch -c nvidia --file requirements.txt
-source activate tpsm
-# to deactivate environment: source deactivate
+bash scripts/create_env.sh
 ```
 
 # Download Models
@@ -29,6 +26,11 @@ source activate tpsm
 # Run Demo
 ```
 python demo.py --config config/vox-256.yaml --checkpoint checkpoints/vox.pth.tar --source_image assets/source.png --driving_video assets/driving.mp4
+```
+
+## Run Demo on ASU-Sol
+```bash
+sbatch scripts/run_demo.sh
 ```
 
 Additional models for articulated-animation repository: 
