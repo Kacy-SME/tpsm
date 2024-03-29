@@ -1,6 +1,6 @@
 ## Output Videos
 
-Our project showcases the remarkable capabilities of the TPS (Thin Plate Spline) algorithm in animating a wasp model based on driving videos. Below, you will find a series of output videos demonstrating the versatility and effectiveness of our models, with a special emphasis on the last GIF which represents the pinnacle of our custom training efforts.
+Our project showcases the remarkable capabilities of the TPS (Thin Plate Spline) algorithm in animating a wasp image based on driving videos. Below, you will find a series of output videos demonstrating the versatility and effectiveness of our models, with a special emphasis on the last GIF which represents the pinnacle of our custom training efforts.
 
 ### Pre-Trained Model Outputs
 
