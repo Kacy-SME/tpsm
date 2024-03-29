@@ -13,7 +13,8 @@ Our project showcases the remarkable capabilities of the TPS (Thin Plate Spline)
    Here, the same pre-trained TPS model animates our wasp figure using a driving video of another wasp. This test illustrates the model's initial testing on more congruent source and target pairs.  
    
 <img src="https://github.com/Kacy-SME/tpsm/blob/main/assets/result-PretrainedWasp.gif" width="50%" />
-### Highlight: Custom Trained Model Output
+
+### Custom Trained Model Output
 
 3. **Enhanced Wasp Animation with Custom Training**  
    The culmination of our project thus far is presented in this output, where we've applied a TPS model that underwent custom training specifically tailored to the nuances of wasp motion. This GIF not only demonstrates a significant improvement in the fidelity and naturalism of the wasp animation but also highlights the effectiveness of our specialized training regimen. The precise movements, much closer to natural wasp actions, underscore the value of custom training for specific animation goals.  
