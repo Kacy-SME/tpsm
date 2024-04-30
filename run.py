@@ -49,16 +49,8 @@ if __name__ == "__main__":
     parser.add_argument("--driving_video", type=str, help="Path to the driving video")
     opt = parser.parse_args()
 
-    source_image = imageio.imread(opt.source_image)
-    source_image = resize(source_image, (256, 256))[..., :3]
-
-    reader = imageio.get_reader(opt.driving_video)
-    fps = reader.get_meta_data()['fps']
-    driving_video = [resize(frame, (256, 256))[..., :3] for frame in reader]
-    reader.close()
-
     with open(opt.config) as f:
-        config = yaml.load(f)
+        config = yaml.load(f, Loader=yaml.FullLoader)
 
     if opt.checkpoint is not None:
         log_dir = os.path.join(*os.path.split(opt.checkpoint)[:-1])
@@ -109,4 +101,12 @@ if __name__ == "__main__":
         train_avd(config, inpainting, kp_detector, bg_predictor, dense_motion_network, avd_network, opt.checkpoint, log_dir, dataset)
     elif opt.mode == 'reconstruction':
         print("Reconstruction...")
+        source_image = imageio.imread(opt.source_image)
+        source_image = resize(source_image, (256, 256))[..., :3]
+
+        reader = imageio.get_reader(opt.driving_video)
+        fps = reader.get_meta_data()['fps']
+        driving_video = [resize(frame, (256, 256))[..., :3] for frame in reader]
+        reader.close()
+
         reconstruction(config, inpainting, kp_detector, bg_predictor, dense_motion_network, opt.checkpoint, log_dir, dataset)
