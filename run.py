@@ -1,38 +1,34 @@
-import matplotlib
-matplotlib.use('Agg')
-
-import os, sys
-import yaml
+import os
+import sys
 from argparse import ArgumentParser
 from time import gmtime, strftime
 from shutil import copy
+import matplotlib
+import yaml
+import torch
+from skimage.transform import resize
+import imageio
 from frames_dataset import FramesDataset
-
 from modules.inpainting_network import InpaintingNetwork
 from modules.keypoint_detector import KPDetector
 from modules.bg_motion_predictor import BGMotionPredictor
 from modules.dense_motion import DenseMotionNetwork
 from modules.avd_network import AVDNetwork
-import torch
-torch.cuda.set_per_process_memory_fraction(0.5)  # Adjust the fraction as needed
 from train import train
 from train_avd import train_avd
 from reconstruction import reconstruction
-import imageio
-from skimage.transform import resize
 
+# Adjust the fraction as needed
+torch.cuda.set_per_process_memory_fraction(0.5) # Adjust the fraction as needed
+matplotlib.use('Agg')
 
 #os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 #os.environ["CUDA_VISIBLE_DEVICES"] = "4"
-
-
-import torch
 
 # Set the environment variable
 os.environ["TORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb=64"
 
 # Now you can continue with your script
-
 
 if __name__ == "__main__":
     
