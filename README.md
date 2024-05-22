@@ -20,3 +20,6 @@ Our project showcases the remarkable capabilities of the TPS (Thin Plate Spline)
    The culmination of our project thus far is presented in this output, where we've applied a TPS model that underwent custom training specifically tailored to the nuances of wasp motion. This GIF not only demonstrates a significant improvement in the fidelity and naturalism of the wasp animation but also highlights the effectiveness of our specialized training regimen. The precise movements, much closer to natural wasp actions, underscore the value of custom training for specific animation goals.  
 
     <img src="https://github.com/Kacy-SME/tpsm/blob/main/assets/result-TrainedWasp.gif" width="45%" />
+    
+    <img src="https://github.com/Kacy-SME/tpsm/blob/main/assets/sol-ezgif.com-crop.gif" width="45%" />
+    
