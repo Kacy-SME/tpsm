@@ -6,6 +6,7 @@ from torchvision import models, transforms
 from scipy.spatial import distance
 import argparse
 from PIL import Image
+
 # Initialize Mediapipe and pre-trained models
 mp_pose = mp.solutions.pose
 mp_face = mp.solutions.face_mesh
@@ -17,7 +18,7 @@ face = mp_face.FaceMesh()
 def l1_distance(img1, img2):
     return np.mean(np.abs(img1 - img2))
 
-# Keypoint extraction
+# Keypoint extraction with logging
 def extract_keypoints(image, model, is_face=False):
     if is_face:
         results = model.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
@@ -26,6 +27,8 @@ def extract_keypoints(image, model, is_face=False):
             for landmarks in results.multi_face_landmarks:
                 for landmark in landmarks.landmark:
                     keypoints.append((landmark.x, landmark.y))
+        if not keypoints:
+            print("No face keypoints detected")
         return keypoints
     else:
         results = model.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
@@ -33,17 +36,28 @@ def extract_keypoints(image, model, is_face=False):
         if results.pose_landmarks:
             for landmark in results.pose_landmarks.landmark:
                 keypoints.append((landmark.x, landmark.y, landmark.z))
+        if not keypoints:
+            print("No pose keypoints detected")
         return keypoints
 
 # Average Keypoint Distance (AKD)
 def average_keypoint_distance(kp1, kp2):
     return np.mean([distance.euclidean(k1, k2) for k1, k2 in zip(kp1, kp2)])
 
-# Missing Keypoint Rate (MKR)
-def missing_keypoint_rate(kp1, kp2):
-    kp1_set = set(kp1)
-    kp2_set = set(kp2)
-    return 1 - len(kp1_set - kp2_set) / len(kp1_set)
+def missing_keypoint_rate(kp1, kp2, tolerance=1e-5):
+    kp1_set = set([(round(x, 5), round(y, 5)) for x, y in kp1])
+    kp2_set = set([(round(x, 5), round(y, 5)) for x, y in kp2])
+    missing_kp_count = len(kp1_set - kp2_set)
+    print(f"Keypoints in original but missing in generated: {missing_kp_count} / {len(kp1_set)}")
+    return 1 - len(kp1_set & kp2_set) / len(kp1_set)
+
+# Updated for 3D keypoints (pose keypoints)
+def missing_keypoint_rate_3d(kp1, kp2, tolerance=1e-5):
+    kp1_set = set([(round(x, 5), round(y, 5), round(z, 5)) for x, y, z in kp1])
+    kp2_set = set([(round(x, 5), round(y, 5), round(z, 5)) for x, y, z in kp2])
+    missing_kp_count = len(kp1_set - kp2_set)
+    print(f"Keypoints in original but missing in generated: {missing_kp_count} / {len(kp1_set)}")
+    return 1 - len(kp1_set & kp2_set) / len(kp1_set)
 
 # Average Euclidean Distance (AED)
 def average_euclidean_distance(id1, id2):
@@ -67,7 +81,6 @@ def extract_identity(image, model):
         identity = model(image)
     return identity
 
-# Process videos
 def process_videos(original_video_path, generated_video_path):
     original_video = cv2.VideoCapture(original_video_path)
     generated_video = cv2.VideoCapture(generated_video_path)
@@ -79,6 +92,8 @@ def process_videos(original_video_path, generated_video_path):
         "AED": []
     }
 
+    frame_count = 0
+
     while original_video.isOpened() and generated_video.isOpened():
         ret1, frame1 = original_video.read()
         ret2, frame2 = generated_video.read()
@@ -86,7 +101,6 @@ def process_videos(original_video_path, generated_video_path):
         if not ret1 or not ret2:
             break
 
-        # Resize frames for consistent comparison
         frame1 = cv2.resize(frame1, (256, 256))
         frame2 = cv2.resize(frame2, (256, 256))
 
@@ -100,9 +114,11 @@ def process_videos(original_video_path, generated_video_path):
         kp2_face = extract_keypoints(frame2, face, is_face=True)
 
         if kp1_pose and kp2_pose:
+            print(f"Frame {frame_count + 1}: Pose keypoints - Original: {len(kp1_pose)}, Generated: {len(kp2_pose)}")
             metrics["AKD"].append(average_keypoint_distance(kp1_pose, kp2_pose))
-            metrics["MKR"].append(missing_keypoint_rate(kp1_pose, kp2_pose))
+            metrics["MKR"].append(missing_keypoint_rate_3d(kp1_pose, kp2_pose))
         if kp1_face and kp2_face:
+            print(f"Frame {frame_count + 1}: Face keypoints - Original: {len(kp1_face)}, Generated: {len(kp2_face)}")
             metrics["AKD"].append(average_keypoint_distance(kp1_face, kp2_face))
             metrics["MKR"].append(missing_keypoint_rate(kp1_face, kp2_face))
 
@@ -115,12 +131,16 @@ def process_videos(original_video_path, generated_video_path):
         metrics["AED"].append(average_euclidean_distance(id1_body, id2_body))
         metrics["AED"].append(average_euclidean_distance(id1_face, id2_face))
 
+        frame_count += 1
+        print(f"Processed frame {frame_count}")
+
     # Average metrics over all frames
     for key in metrics:
         metrics[key] = np.mean(metrics[key])
 
     original_video.release()
     generated_video.release()
+    print(f"Total frames processed: {frame_count}")
     return metrics
 
 # Command-line argument parsing

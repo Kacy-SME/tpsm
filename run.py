@@ -66,8 +66,10 @@ if __name__ == "__main__":
         log_dir = os.path.join(opt.log_dir, os.path.basename(opt.config).split('.')[0])
         log_dir += ' ' + strftime("%d_%m_%y_%H.%M.%S", gmtime())
 
-    inpainting = InpaintingNetwork(**config['model_params']['generator_params'],
-                                        **config['model_params']['common_params'])
+    inpainting = InpaintingNetwork(
+            **config['model_params']['generator_params'],
+            **config['model_params']['common_params']
+    )
 
     if torch.cuda.is_available():
         cuda_device = torch.device('cuda:'+str(opt.device_ids[0]))
