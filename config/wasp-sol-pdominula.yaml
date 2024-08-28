@@ -1,5 +1,5 @@
 dataset_params:
-  root_dir: "data/p_dominula_256"
+  root_dir: "assets/p_dominula_256"
   frame_shape: null
   id_sampling: false
   augmentation_params:
