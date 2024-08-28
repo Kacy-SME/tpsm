@@ -19,14 +19,14 @@ from train_avd import train_avd
 from reconstruction import reconstruction
 
 # Adjust the fraction as needed
-torch.cuda.set_per_process_memory_fraction(0.5) # Adjust the fraction as needed
+# torch.cuda.set_per_process_memory_fraction(0.5) # Adjust the fraction as needed
 matplotlib.use('Agg')
 
 #os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 #os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 
 # Set the environment variable
-os.environ["TORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb=64"
+# os.environ["TORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb=64"
 
 # Now you can continue with your script
 
