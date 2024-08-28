@@ -84,8 +84,12 @@ class FramesDataset(Dataset):
             test_videos = os.listdir(os.path.join(root_dir, 'test'))
             self.root_dir = os.path.join(self.root_dir, 'train' if is_train else 'test')
         else:
-            print("Use random train-test split.")
-            train_videos, test_videos = train_test_split(self.videos, random_state=random_seed, test_size=0.2)
+            if len(self.videos) == 1:
+                print("Training with only one video, no test set.")
+                train_videos = self.videos
+            else:
+                print("Use random train-test split.")
+                train_videos, test_videos = train_test_split(self.videos, random_state=random_seed, test_size=0.2)
 
         if is_train:
             self.videos = train_videos
