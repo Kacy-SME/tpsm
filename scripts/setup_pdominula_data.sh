@@ -1,3 +1,13 @@
+#!/bin/bash
+
+#SBATCH --partition=htc
+#SBATCH --qos=public
+#SBATCH --cpus-per-task=1
+#SBATCH --time=20:00
+#SBATCH --mem=20G
+
+module load mamba/latest
+source activate tpsm-wasps
 
 # create data and p_dominula directories
 echo "Create p_dominula directories under assets"
