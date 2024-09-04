@@ -3,9 +3,9 @@
 #SBATCH --job-name=tpsm_env
 #SBATCH --partition=htc
 #SBATCH --qos=public
-#SBATCH --cpus-per-task=4
-#SBATCH --time=0-1
-#SBATCH --mem=4G
+#SBATCH --cpus-per-task=8
+#SBATCH --time=0-2
+#SBATCH --mem=20G
 
 module load mamba/latest
 
