@@ -7,7 +7,7 @@
 
 ### Step 1: Clone the repository
 ```bash
-git clone git@github.com:Kacy-SME/tpsm.git
+git clone -b asu-sol git@github.com:Kacy-SME/tpsm.git
 cd tpsm
 ```
 
