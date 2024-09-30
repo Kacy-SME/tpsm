@@ -1,5 +1,5 @@
 dataset_params:
-  root_dir: "assets/interaction/"
+  root_dir: "assets/interaction_256/"
   frame_shape: null
   id_sampling: false
   augmentation_params:
@@ -38,7 +38,7 @@ train_params:
   lr_generator: 2.0e-4
   batch_size: 28
   scales: [1, 0.5, 0.25, 0.125]
-  dataloader_workers: 48
+  dataloader_workers: 4
   checkpoint_freq: 50
   dropout_epoch: 35
   dropout_maxp: 0.3

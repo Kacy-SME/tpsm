@@ -1,0 +1,35 @@
+
+=====================================================================
+This module is intended solely for building or source activating user
+python environments, i.e.,
+
+    mamba create -n myenv -c conda-forge
+
+or
+
+    source activate myenv
+
+To list available environments, run:
+
+    mamba info --envs
+
+See our docs: https://links.asu.edu/solpy
+
+Any other use is NOT TESTED.
+=====================================================================
+
+  
+Creating the tpsm-wasps environment.
+usage: mamba create [-h] [--clone ENV] (-n ENVIRONMENT | -p PATH) [-c CHANNEL]
+                    [--use-local] [--override-channels]
+                    [--repodata-fn REPODATA_FNS] [--experimental {jlap,lock}]
+                    [--no-lock] [--repodata-use-zst | --no-repodata-use-zst]
+                    [--strict-channel-priority] [--no-channel-priority]
+                    [--no-deps | --only-deps] [--no-pin] [--copy]
+                    [--no-shortcuts] [--shortcuts-only SHORTCUTS_ONLY] [-C]
+                    [-k] [--offline] [--json] [-v] [-q] [-d] [-y]
+                    [--download-only] [--show-channel-urls] [--file FILE]
+                    [--no-default-packages] [--subdir SUBDIR]
+                    [--solver {classic,libmamba}] [-m] [--dev]
+                    [package_spec ...]
+mamba create: error: one of the arguments -n/--name -p/--prefix is required

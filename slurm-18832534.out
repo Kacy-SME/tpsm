@@ -1,0 +1,4 @@
+Do you want to train or do inference? (type 'train' or 'inference'):
+Please enter any sbatch additional arguments (e.g., --mem=100G --time=01:00).
+Press Enter to use the default values.
+Invalid job type selected.
