@@ -11,5 +11,7 @@ checkpoints/*
 *.sqlite
 /.vs/tpsm/FileContentIndex
 /.vs/tpsm/v17
-.gitignore
+assets/*.zip
+assets/*.mp4
+assets/interaction/
 data/*
