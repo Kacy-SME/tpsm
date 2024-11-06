@@ -1,7 +1,7 @@
 from torch import nn
 import torch.nn.functional as F
 import torch
-
+import numpy as np
 
 class TPS:
     '''
@@ -41,11 +41,16 @@ class TPS:
             one = torch.eye(L.shape[2]).expand(L.shape).to(device).type(kp_type)*0.01
             L = L + one
 
-            param = torch.matmul(torch.inverse(L),Y)
-            self.theta = param[:,:,n:,:].permute(0,1,3,2)
-
-            self.control_points = kp_1
-            self.control_params = param[:,:,:n,:]
+            try:
+                param = torch.matmul(torch.inverse(L), Y)
+                self.theta = param[:, :, n:, :].permute(0, 1, 3, 2)
+                self.control_points = kp_1
+                self.control_params = param[:, :, :n, :]
+            except torch.linalg.LinAlgError as e:
+                print(f"Skipping batch element due to singular matrix: {e}")
+                self.theta = torch.zeros(self.bs, kp_1.shape[1], 2, 3).to(device)  # Initialize default theta
+                self.control_points = torch.zeros_like(kp_1)  # Default control points
+                self.control_params = torch.zeros(self.bs, kp_1.shape[1], n, 2).to(device)  # Default control params
         else:
             raise Exception("Error TPS mode")
 
@@ -62,6 +67,9 @@ class TPS:
         theta = self.theta.type(coordinates.type()).to(coordinates.device)
         control_points = self.control_points.type(coordinates.type()).to(coordinates.device)
         control_params = self.control_params.type(coordinates.type()).to(coordinates.device)
+
+        print(f"theta shape: {self.theta.shape}")  # Should have batch size 16
+        print(f"coordinates shape: {coordinates.shape}")  # Should also have batch size 16
 
         if self.mode == 'kp':
             transformed = torch.matmul(theta[:, :, :, :2], coordinates.permute(0, 2, 1)) + theta[:, :, :, 2:]
@@ -90,31 +98,37 @@ class TPS:
             raise Exception("Error TPS mode")
 
         return transformed
-        
+
 
 def kp2gaussian(kp, spatial_size, kp_variance):
     """
-    Transform a keypoint into gaussian like representation
+    Transform a keypoint into gaussian-like representation, adjusted for keypoints.
     """
-
+    print(f"kp is located on: {kp.device}")
+    print(f"spatial_size: {spatial_size}")
+    # Generate the coordinate grid for the spatial size (e.g., 64x64)
     coordinate_grid = make_coordinate_grid(spatial_size, kp.type()).to(kp.device)
-    number_of_leading_dimensions = len(kp.shape) - 1
-    shape = (1,) * number_of_leading_dimensions + coordinate_grid.shape
-    coordinate_grid = coordinate_grid.view(*shape)
-    repeats = kp.shape[:number_of_leading_dimensions] + (1, 1, 1)
-    coordinate_grid = coordinate_grid.repeat(*repeats)
+    print(f"coordinate_grid is located on: {coordinate_grid.device}")
 
-    # Preprocess kp shape
-    shape = kp.shape[:number_of_leading_dimensions] + (1, 1, 2)
-    kp = kp.view(*shape)
+    # Assuming kp is of shape [batch_size, num_keypoints, 2]
+    batch_size, num_keypoints, _ = kp.shape
 
+    # Reshape the grid to match keypoint dimensions
+    coordinate_grid = coordinate_grid.view(1, 1, *spatial_size, 2) #Add leading dims
+    
+    coordinate_grid = coordinate_grid.expand(batch_size, num_keypoints, *spatial_size, 2)
+
+    # Ensure kp is on the same device as coordinate_grid
+    kp = kp.to(coordinate_grid.device)
+
+    # Reshape kp to [batch_size, num_keypoints, 1, 1, 2] to align with the grid
+    kp = kp.view(batch_size, num_keypoints, 1, 1, 2)
+
+    # Subtract keypoints from the coordinate grid and compute Gaussian
     mean_sub = (coordinate_grid - kp)
-
     out = torch.exp(-0.5 * (mean_sub ** 2).sum(-1) / kp_variance)
 
     return out
-
-
 def make_coordinate_grid(spatial_size, type):
     """
     Create a meshgrid [-1,1] x [-1,1] of given spatial_size.

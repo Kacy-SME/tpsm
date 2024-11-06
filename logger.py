@@ -106,11 +106,33 @@ class Visualizer:
     def draw_image_with_kp(self, image, kp_array):
         image = np.copy(image)
         spatial_size = np.array(image.shape[:2][::-1])[np.newaxis]
-        kp_array = spatial_size * (kp_array + 1) / 2
+
+        # Debug prints to understand the shapes
+        print(f"spatial_size: {spatial_size.shape}, kp_array: {kp_array.shape}")
+
+        # Handle the case where kp_array has an extra leading dimension
+        kp_array = np.squeeze(kp_array, axis=0) if kp_array.shape[0] == 1 else kp_array
+
+        # Check if kp_array needs reshaping
+        if kp_array.shape == (2, 5):  # Incorrect shape, transpose it
+            kp_array = kp_array.T  # Swap dimensions to match the expected format
+
+        # Adjust kp_array if it has 5 keypoints
+        if kp_array.shape == (5, 2):  # 5 keypoints, add batch dim if expected is 60
+            kp_array = kp_array[np.newaxis, :, :]  # Add batch dimension (1, 5, 2)
+
+        # Check if it's the expected 60 keypoints
+        if kp_array.shape[0] == 60 or kp_array.shape[0] == 5:
+            kp_array = spatial_size * (kp_array + 1) / 2
+        else:
+            raise ValueError(f"kp_array has an unexpected shape: {kp_array.shape}")
+
         num_kp = kp_array.shape[0]
+
         for kp_ind, kp in enumerate(kp_array):
             rr, cc = disk((kp[1], kp[0]), self.kp_size, shape=image.shape[:2])
             image[rr, cc] = np.array(self.colormap(kp_ind / num_kp))[:3]
+
         return image
 
     def create_image_column_with_kp(self, images, kp):

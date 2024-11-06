@@ -12,5 +12,5 @@ source activate tpsm-wasps
 
 echo "Running the demo with the wasp-sol-interaction checkpoint and the interaction source and driving video."
 
-python demo.py --config config/wasp-sol-interaction.yaml --checkpoint checkpoints/00000099-checkpoint.pth.tar --source_image assets/interaction-source.png --driving_video assets/interaction-driving.mp4
+python demo.py --config config/wasp-sol-interaction.yaml --checkpoint log/wasp-sol-interaction_trained/00000099-checkpoint.pth.tar --source_image assets/interaction-source-edit.png --driving_video assets/interaction-driving.mp4
 
